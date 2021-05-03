@@ -1,4 +1,7 @@
 from django.db import models
+from pygments.lexers import get_lexer_by_name
+from pygments.formatters.html import HtmlFormatter
+from pygments import highlight
 # Create your models here.
 
 
@@ -7,6 +10,8 @@ class Article(models.Model):
     author = models.CharField(max_length=100)
     email = models.EmailField(max_length=50)
     date = models.DateTimeField(auto_now_add=True)
+    owner = models.ForeignKey(
+        'auth.User', related_name='articles', on_delete=models.CASCADE)
 
     def __str__(self):
         return self.title
