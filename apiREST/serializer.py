@@ -3,15 +3,21 @@ from .models import Article
 from django.contrib.auth.models import User
 
 
-class ArticleSerializer(serializers.ModelSerializer):
+class ArticleSerializer(serializers.HyperlinkedModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
+    highlight = serializers.HyperlinkedIdentityField(
+        view_name='article-highlight', format='html')
+
     class Meta:
         model = Article
-        fields = ['id', 'title', 'author', 'email', 'owner']
+        fields = ['url', 'id', 'highlight', 'owner',
+                  'title', 'author', 'email', 'date']
 
-class UserSerializer(serializers.ModelSerializer):
-    snippets = serializers.PrimaryKeyRelatedField(many=True, queryset=Article.objects.all())
+
+class UserSerializer(serializers.HyperlinkedModelSerializer):
+    articles = serializers.HyperlinkedRelatedField(
+        many=True, view_name='article-detail', read_only=True)
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'articles']
+        fields = ['url', 'id', 'username', 'articles']
